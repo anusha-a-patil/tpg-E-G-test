@@ -23,8 +23,8 @@ phases:
         bucketfilename="bucket.yaml"
         bucketfile=$CODEBUILD_SRC_DIR/cfn/"${bucketfilename}"
         echo $bucketfile
-        aws s3 cp $bucketfile s3://mycicd-bucket/cicd-files/
-        bucketurl=https://s3.amazonaws.com/mycicd-bucket/cicd-files/bucket.yaml
+        aws s3 cp $bucketfile s3://mycicd-bucket-ap/cicd-files/
+        bucketurl=https://s3.amazonaws.com/mycicd-bucket-ap/cicd-files/bucket.yaml
         aws cloudformation deploy \
           --template-file $cfnfile \
           --stack-name tpg-stack \
