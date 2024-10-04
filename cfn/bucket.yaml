@@ -17,7 +17,7 @@ Resources:
       BucketName: 
          Fn::Join:
           - "-"
-          - [ !Ref EnvType, !Ref DomainName, "landing-bucket"]
+          - [ !Ref EnvType, !Ref DomainName, "landing-bucket-tpg"]
       BucketEncryption:
         ServerSideEncryptionConfiguration:
         - ServerSideEncryptionByDefault:
@@ -37,7 +37,7 @@ Resources:
       BucketName: 
          Fn::Join:
           - "-"
-          - [ !Ref EnvType, !Ref DomainName, "raw-bucket"]
+          - [ !Ref EnvType, !Ref DomainName, "raw-bucket-tpg"]
       BucketEncryption:
         ServerSideEncryptionConfiguration:
           - ServerSideEncryptionByDefault:
@@ -57,7 +57,7 @@ Resources:
       BucketName: 
          Fn::Join:
           - "-"
-          - [ !Ref EnvType, !Ref DomainName, "enriched-bucket"]
+          - [ !Ref EnvType, !Ref DomainName, "enriched-bucket-tpg"]
       BucketEncryption:
         ServerSideEncryptionConfiguration:
         - ServerSideEncryptionByDefault:
