@@ -8,14 +8,17 @@ Parameters:
     Description: The environment type (e.g., prod, dev)
   DomainName:
     Type: String
-    Description: The name of the domain 
+    Description: The name of the domain
+  BucketFilePath:
+    Type: String
+    Description: bucket yaml path
 
 Resources:
   s3bucket:
     Type: AWS::CloudFormation::Stack
-    Condition: Creation
+    #Condition: Creation
     Properties:
-      TemplateURL: ./cfn/bucket.yaml
+      TemplateURL: !Ref BucketFilePath
       Parameters:
         EnvType: !Ref EnvType
         DomainName: !Ref DomainName

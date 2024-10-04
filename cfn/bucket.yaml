@@ -40,8 +40,8 @@ Resources:
           - [ !Ref EnvType, !Ref DomainName, "raw-bucket"]
       BucketEncryption:
         ServerSideEncryptionConfiguration:
-        - ServerSideEncryptionByDefault:
-            SSEAlgorithm: AES256        
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256        
       VersioningConfiguration:
         Status: Enabled
       AccessControl: Private

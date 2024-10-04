@@ -5,7 +5,7 @@ phases:
       - |
         echo Build started on `date`
         filename="sample_config_file.txt"
-        file=$(find / -name "$filename" -print 2>/dev/null)
+        file=$CODEBUILD_SRC_DIR/config_files/"${filename}"
         echo $file
         echo Printing env variables
         echo "${env}"
@@ -17,14 +17,20 @@ phases:
         echo "Key '$KEY' not found in $file"
         else echo "The value for '$KEY' is '$VALUE'"
         fi
-        cfn="main.yaml"
-        cfnfile=$(find / -name "$cfn" -print 2>/dev/null)
+        cfnfilename="main.yaml"
+        cfnfile=$CODEBUILD_SRC_DIR/cfn/"${cfnfilename}"
         echo $cfnfile
+        bucketfilename="bucket.yaml"
+        bucketfile=$CODEBUILD_SRC_DIR/cfn/"${bucketfilename}"
+        echo $bucketfile
+        aws s3 cp $bucketfile s3://mycicd-bucket/cicd-files/
+        bucketurl=https://s3.amazonaws.com/mycicd-bucket/cicd-files/bucket.yaml
         aws cloudformation deploy \
           --template-file $cfnfile \
           --stack-name tpg-stack \
-          --parameter-overrides EnvType="${env}" DomainName="${domain}" \
+          --parameter-overrides EnvType="${env}" DomainName="${domain}" BucketFilePath="${bucketurl}" \
           --capabilities CAPABILITY_IAM CAPABILITY_NAMED_IAM
- ## post_build:
-  ##  commands:
-    ##  - echo Build complete
+  post_build:
+    commands:
+      - aws cloudformation describe-stack-events --stack-name tpg-stack
+      - echo Build complete

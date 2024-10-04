@@ -1,0 +1,33 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: CloudFormation template to create an S3 bucket and CodePipeline.
+Parameters:
+  EnvType:
+    Type: String
+    Default: "dev"
+    Description: The environment type (e.g., prod, dev)
+  DomainName:
+    Type: String
+    Description: The name of the domain
+
+Resources:
+  TPGBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      #BucketName: tpg-s3-bucket
+      BucketName: 
+         Fn::Join:
+          - "-"
+          - [ !Ref EnvType, !Ref DomainName, "raw-bucket"]
+      AccessControl: Private
+      Tags:
+        - Key: BucketName
+          Value: tpg-s3-bucket
+        - Key: Environment
+          Value: dev
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: aws:kms
+              KMSMasterKeyID: KMS-KEY-ARN
+            BucketKeyEnabled: true
+    DeletionPolicy: Delete
