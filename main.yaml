@@ -1,0 +1,21 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: CloudFormation template to create an S3 bucket
+
+Parameters:
+  EnvType:
+    Type: String
+    Default: "dev"
+    Description: The environment type (e.g., prod, dev)
+  DomainName:
+    Type: String
+    Description: The name of the domain 
+
+Resources:
+  s3bucket:
+    Type: AWS::CloudFormation::Stack
+    Condition: Creation
+    Properties:
+      TemplateURL: ./Infrastructure/s3.yaml
+      Parameters:
+        EnvType: !Ref EnvType
+        DomainName: !Ref DomainName

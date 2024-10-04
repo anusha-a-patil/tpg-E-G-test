@@ -17,7 +17,7 @@ phases:
         echo "Key '$KEY' not found in $file"
         else echo "The value for '$KEY' is '$VALUE'"
         fi
-        cfn="bucket.yaml"
+        cfn="main.yaml"
         cfnfile=$(find / -name "$cfn" -print 2>/dev/null)
         echo $cfnfile
         aws cloudformation deploy \

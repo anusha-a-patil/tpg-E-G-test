@@ -1,5 +1,6 @@
 AWSTemplateFormatVersion: '2010-09-09'
-Description: CloudFormation template to create an S3 bucket and CodePipeline.
+Description: CloudFormation template to create an S3 bucket
+
 Parameters:
   EnvType:
     Type: String
@@ -7,27 +8,76 @@ Parameters:
     Description: The environment type (e.g., prod, dev)
   DomainName:
     Type: String
-    Description: The name of the domain
+    Description: The name of the domain 
 
 Resources:
-  TPGBucket:
-    Type: AWS::S3::Bucket
+  LandingS3Bucket:
+    Type: 'AWS::S3::Bucket'
     Properties:
-      #BucketName: tpg-s3-bucket
+      BucketName: 
+         Fn::Join:
+          - "-"
+          - [ !Ref EnvType, !Ref DomainName, "landing-bucket"]
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+        - ServerSideEncryptionByDefault:
+            SSEAlgorithm: AES256        
+      VersioningConfiguration:
+        Status: Enabled
+      AccessControl: Private
+      LifecycleConfiguration:
+        Rules:
+          - Id: ExpireOldVersions
+            Status: Enabled
+            NoncurrentVersionExpirationInDays: 30
+
+  RawS3Bucket:
+    Type: 'AWS::S3::Bucket'
+    Properties:
       BucketName: 
          Fn::Join:
           - "-"
           - [ !Ref EnvType, !Ref DomainName, "raw-bucket"]
-      AccessControl: Private
-      Tags:
-        - Key: BucketName
-          Value: tpg-s3-bucket
-        - Key: Environment
-          Value: dev
       BucketEncryption:
         ServerSideEncryptionConfiguration:
-          - ServerSideEncryptionByDefault:
-              SSEAlgorithm: aws:kms
-              KMSMasterKeyID: KMS-KEY-ARN
-            BucketKeyEnabled: true
-    DeletionPolicy: Delete
+        - ServerSideEncryptionByDefault:
+            SSEAlgorithm: AES256        
+      VersioningConfiguration:
+        Status: Enabled
+      AccessControl: Private
+      LifecycleConfiguration:
+        Rules:
+          - Id: ExpireOldVersions
+            Status: Enabled
+            NoncurrentVersionExpirationInDays: 30
+
+  EnrichedS3Bucket:
+    Type: 'AWS::S3::Bucket'
+    Properties:
+      BucketName: 
+         Fn::Join:
+          - "-"
+          - [ !Ref EnvType, !Ref DomainName, "enriched-bucket"]
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+        - ServerSideEncryptionByDefault:
+            SSEAlgorithm: AES256        
+      VersioningConfiguration:
+        Status: Enabled
+      AccessControl: Private
+      LifecycleConfiguration:
+        Rules:
+          - Id: ExpireOldVersions
+            Status: Enabled
+            NoncurrentVersionExpirationInDays: 30                      
+
+Outputs:
+  LandingBucketName:
+    Description: The name of the Landing S3 bucket
+    Value: !Ref LandingS3Bucket
+  RawS3BucketName:
+    Description: The name of the Raw S3 bucket
+    Value: !Ref RawS3Bucket
+  EnrichedS3BucketName:
+    Description: The name of the Enriched S3 bucket
+    Value: !Ref EnrichedS3Bucket
