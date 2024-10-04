@@ -1,0 +1,30 @@
+version: 0.2
+phases:
+  build:
+    commands:
+      - |
+        echo Build started on `date`
+        filename="sample_config_file.txt"
+        file=$(find / -name "$filename" -print 2>/dev/null)
+        echo $file
+        echo Printing env variables
+        echo "${env}"
+        echo "${domain}"
+        KEY="${domain}_${env}"
+        echo "${KEY}"
+        VALUE=$(grep "^${KEY}=" "$file" | sed -e "s/^${KEY}=//")
+        if [ -z "$VALUE" ]; then
+        echo "Key '$KEY' not found in $file"
+        else echo "The value for '$KEY' is '$VALUE'"
+        fi
+        cfn="bucket.yaml"
+        cfnfile=$(find / -name "$cfn" -print 2>/dev/null)
+        echo $cfnfile
+        aws cloudformation deploy \
+          --template-file $cfnfile \
+          --stack-name tpg-stack \
+          --parameter-overrides EnvType="${env}" DomainName="${domain}" \
+          --capabilities CAPABILITY_IAM CAPABILITY_NAMED_IAM
+ ## post_build:
+  ##  commands:
+    ##  - echo Build complete
