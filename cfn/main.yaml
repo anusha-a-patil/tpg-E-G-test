@@ -15,7 +15,7 @@ Resources:
     Type: AWS::CloudFormation::Stack
     Condition: Creation
     Properties:
-      TemplateURL: ./Infrastructure/s3.yaml
+      TemplateURL: ./cfn/bucket.yaml
       Parameters:
         EnvType: !Ref EnvType
         DomainName: !Ref DomainName
