@@ -10,18 +10,18 @@ Parameters:
   DomainName:
     Type: String
     Description: The name of the domain
-#DB Parameters    
-  DatabaseName:
-    Type: String
-    Default: 'my-glue-database'
-    Description: 'Name of the Glue Database to store the crawled data'
-#Crawler Parameters    
-  CrawlerName:
-    Type: String
-    Description: 'Name of the Glue Crawler'  
-  S3TargetPath:
-    Type: String
-    Description: 'S3 path for the crawler to scan'        
+# #DB Parameters    
+#   DatabaseName:
+#     Type: String
+#     Default: 'my-glue-database'
+#     Description: 'Name of the Glue Database to store the crawled data'
+# #Crawler Parameters    
+#   CrawlerName:
+#     Type: String
+#     Description: 'Name of the Glue Crawler'  
+#   S3TargetPath:
+#     Type: String
+#     Description: 'S3 path for the crawler to scan'        
 
 Resources:
   LandingS3Bucket:
