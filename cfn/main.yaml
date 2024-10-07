@@ -18,6 +18,9 @@ Parameters:
     Type: String
     Default: 'tpg-glue-db'  
     Description: 'Name of the Glue Database'
+  DBFilePath:
+    Type: String
+    Description: DB yaml path    
 
 #Crawler Parameters
   CrawlerName:
@@ -28,6 +31,9 @@ Parameters:
     Type: String
     Description: 'S3 path for the crawler to scan'  
     Default: 'RawS3Bucket'
+  CrawlerFilePath:
+    Type: String
+    Description: Cralwer yaml path 
 
 Resources:
   s3buckets:
