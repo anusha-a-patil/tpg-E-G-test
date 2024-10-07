@@ -2,13 +2,26 @@ AWSTemplateFormatVersion: '2010-09-09'
 Description: CloudFormation template to create an S3 bucket
 
 Parameters:
+#S3 Parameters
   EnvType:
     Type: String
     Default: "dev"
     Description: The environment type (e.g., prod, dev)
   DomainName:
     Type: String
-    Description: The name of the domain 
+    Description: The name of the domain
+#DB Parameters    
+  DatabaseName:
+    Type: String
+    Default: 'my-glue-database'
+    Description: 'Name of the Glue Database to store the crawled data'
+#Crawler Parameters    
+  CrawlerName:
+    Type: String
+    Description: 'Name of the Glue Crawler'  
+  S3TargetPath:
+    Type: String
+    Description: 'S3 path for the crawler to scan'        
 
 Resources:
   LandingS3Bucket:
@@ -69,7 +82,56 @@ Resources:
         Rules:
           - Id: ExpireOldVersions
             Status: Enabled
-            NoncurrentVersionExpirationInDays: 30                      
+            NoncurrentVersionExpirationInDays: 30
+
+  GlueDatabase:
+    Type: AWS::Glue::Database
+    Properties:
+      # CatalogId: !Ref AWS::AccountId
+      DatabaseInput:
+        Name: !Ref DatabaseName
+        Description: "Database for storing metadata from Glue Crawler"
+
+  GlueCrawlerRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - glue.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      Path: "/"
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSGlueServiceRole
+      Policies:
+        - PolicyName: S3Access
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - s3:GetObject
+                  - s3:ListBucket
+                Resource:
+                  - !Sub 'arn:aws:s3:::${S3TargetPath}'
+                  - !Sub 'arn:aws:s3:::${S3TargetPath}/*'
+
+  GlueCrawler:
+    Type: AWS::Glue::Crawler
+    Properties:
+      Name: !Ref CrawlerName
+      Role: !GetAtt GlueCrawlerRole.Arn
+      DatabaseName: !Ref DatabaseName
+      Targets:
+        S3Targets:
+          - Path: !Sub 's3://${S3TargetPath}'
+      SchemaChangePolicy:
+        UpdateBehavior: "UPDATE_IN_DATABASE"
+        DeleteBehavior: "LOG"                
 
 Outputs:
   LandingBucketName:
@@ -81,3 +143,9 @@ Outputs:
   EnrichedS3BucketName:
     Description: The name of the Enriched S3 bucket
     Value: !Ref EnrichedS3Bucket
+  DatabaseName:
+    Description: 'Name of the created Glue Database'
+    Value: !Ref GlueDatabase
+  CrawlerName:
+    Description: 'Name of the created Glue Crawler'
+    Value: !Ref GlueCrawler
