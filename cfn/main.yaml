@@ -49,7 +49,7 @@ Resources:
       TemplateURL: !Ref CrawlerFilePath
       Parameters:
         CrawlerName: !Ref CrawlerName
-        DatabaseName: !GetAtt GlueDatabase.Outputs.DatabaseName
+        DatabaseName: !Ref DatabaseName
         S3TargetPath: !GetAtt s3buckets.Outputs.LandingBucketName
 
 Outputs:
