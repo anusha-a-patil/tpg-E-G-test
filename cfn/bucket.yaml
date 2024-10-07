@@ -10,11 +10,11 @@ Parameters:
   DomainName:
     Type: String
     Description: The name of the domain
-# #DB Parameters    
-#   DatabaseName:
-#     Type: String
-#     Default: 'my-glue-database'
-#     Description: 'Name of the Glue Database to store the crawled data'
+#DB Parameters    
+  DatabaseName:
+    Type: String
+    Default: 'my-glue-database'
+    Description: 'Name of the Glue Database to store the crawled data'
 # #Crawler Parameters    
 #   CrawlerName:
 #     Type: String
@@ -84,13 +84,13 @@ Resources:
             Status: Enabled
             NoncurrentVersionExpirationInDays: 30
 
-  # GlueDatabase:
-  #   Type: AWS::Glue::Database
-  #   Properties:
-  #     # CatalogId: !Ref AWS::AccountId
-  #     DatabaseInput:
-  #       Name: !Ref DatabaseName
-  #       Description: "Database for storing metadata from Glue Crawler"
+  GlueDatabase:
+    Type: AWS::Glue::Database
+    Properties:
+      # CatalogId: !Ref AWS::AccountId
+      DatabaseInput:
+        Name: !Ref DatabaseName
+        Description: "Database for storing metadata from Glue Crawler"
 
   # GlueCrawlerRole:
   #   Type: AWS::IAM::Role
@@ -143,9 +143,9 @@ Outputs:
   EnrichedS3BucketName:
     Description: The name of the Enriched S3 bucket
     Value: !Ref EnrichedS3Bucket
-  # DatabaseName:
-  #   Description: 'Name of the created Glue Database'
-  #   Value: !Ref GlueDatabase
+  DatabaseName:
+    Description: 'Name of the created Glue Database'
+    Value: !Ref GlueDatabase
   # CrawlerName:
   #   Description: 'Name of the created Glue Crawler'
   #   Value: !Ref GlueCrawler

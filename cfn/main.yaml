@@ -13,11 +13,11 @@ Parameters:
   BucketFilePath:
     Type: String
     Description: bucket yaml path
-# #GlueDB Parameters
-#   DatabaseName:
-#     Type: String
-#     Default: 'tpg-glue-db'  
-#     Description: 'Name of the Glue Database'
+#GlueDB Parameters
+  DatabaseName:
+    Type: String
+    Default: 'tpg-glue-db'  
+    Description: 'Name of the Glue Database'
 #   # DBFilePath:
 #   #   Type: String
 #   #   Description: DB yaml path
@@ -44,12 +44,12 @@ Resources:
         EnvType: !Ref EnvType
         DomainName: !Ref DomainName
 
-  # GlueDatabase:
-  #   Type: AWS::Glue::Database
-  #   Properties:
-  #     TemplateURL: !Ref BucketFilePath
-  #     Parameters:
-  #       DatabaseName: !Ref DatabaseName
+  GlueDatabase:
+    Type: AWS::Glue::Database
+    Properties:
+      TemplateURL: !Ref BucketFilePath
+      Parameters:
+        DatabaseName: !Ref DatabaseName
 
   # GlueCrawler:
   #   Type: AWS::Glue::Database
@@ -70,9 +70,9 @@ Outputs:
   EnrichedS3BucketName:
     Description: The name of the Enriched S3 bucket
     Value: !GetAtt s3buckets.Outputs.EnrichedS3BucketName
-  # DatabaseName:
-  #   Description: 'Name of the Glue Database'
-  #   Value: !GetAtt GlueDatabase.Outputs.DatabaseName
+  DatabaseName:
+    Description: 'Name of the Glue Database'
+    Value: !GetAtt GlueDatabase.Outputs.DatabaseName
   # CrawlerName:
   #   Description: 'Name of the created Glue Crawler'
   #   Value: !GetAtt GlueCrawler.Outputs.CrawlerName
