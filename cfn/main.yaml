@@ -20,20 +20,20 @@ Parameters:
     Description: 'Name of the Glue Database'
   DBFilePath:
     Type: String
-    Description: DB yaml path    
+    Description: DB yaml path
 
-#Crawler Parameters
-  CrawlerName:
-    Type: String
-    Default: 'tpg-glue-crawler'
-    Description: 'Name of the Glue Crawler'
-  S3TargetPath:
-    Type: String
-    Description: 'S3 path for the crawler to scan'  
-    Default: 'RawS3Bucket'
-  CrawlerFilePath:
-    Type: String
-    Description: Cralwer yaml path 
+# #Crawler Parameters
+#   CrawlerName:
+#     Type: String
+#     Default: 'tpg-glue-crawler'
+#     Description: 'Name of the Glue Crawler'
+#   S3TargetPath:
+#     Type: String
+#     Description: 'S3 path for the crawler to scan'  
+#     Default: 'RawS3Bucket'
+#   CrawlerFilePath:
+#     Type: String
+#     Description: Cralwer yaml path 
 
 Resources:
   s3buckets:
@@ -51,14 +51,14 @@ Resources:
       Parameters:
         DatabaseName: !Ref DatabaseName
 
-  GlueCrawler:
-    Type: AWS::Glue::Database
-    Properties:
-      TemplateURL: !Ref CrawlerFilePath
-      Parameters:
-        CrawlerName: !Ref CrawlerName
-        DatabaseName: !Ref DatabaseName
-        S3TargetPath: !GetAtt s3buckets.Outputs.LandingBucketName
+  # GlueCrawler:
+  #   Type: AWS::Glue::Database
+  #   Properties:
+  #     TemplateURL: !Ref CrawlerFilePath
+  #     Parameters:
+  #       CrawlerName: !Ref CrawlerName
+  #       DatabaseName: !Ref DatabaseName
+  #       S3TargetPath: !GetAtt s3buckets.Outputs.LandingBucketName
 
 Outputs:
   LandingBucketName:
@@ -73,7 +73,7 @@ Outputs:
   DatabaseName:
     Description: 'Name of the Glue Database'
     Value: !GetAtt GlueDatabase.Outputs.DatabaseName
-  CrawlerName:
-    Description: 'Name of the created Glue Crawler'
-    Value: !GetAtt GlueCrawler.Outputs.CrawlerName
+  # CrawlerName:
+  #   Description: 'Name of the created Glue Crawler'
+  #   Value: !GetAtt GlueCrawler.Outputs.CrawlerName
 

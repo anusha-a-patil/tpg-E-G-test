@@ -26,19 +26,14 @@ phases:
         databasefilename="glue_database.yaml"
         databasefile=$CODEBUILD_SRC_DIR/cfn/"${databasefilename}"
         echo $databasefile
-        crawlerfilename="glue_crawler.yaml"
-        crawlerfile=$CODEBUILD_SRC_DIR/cfn/"${crawlerfilename}"
-        echo $crawlerfile        
         aws s3 cp $bucketfile s3://mycicd-bucket-ap/cicd-files/
         aws s3 cp $databasefile s3://mycicd-bucket-ap/cicd-files/
-        aws s3 cp $crawlerfile s3://mycicd-bucket-ap/cicd-files/
         bucketurl=https://s3.amazonaws.com/mycicd-bucket-ap/cicd-files/bucket.yaml
         dburl=https://s3.amazonaws.com/mycicd-bucket-ap/cicd-files/glue_database.yaml
-        crawlerurl=https://s3.amazonaws.com/mycicd-bucket-ap/cicd-files/glue_crawler.yaml
         aws cloudformation deploy \
           --template-file $cfnfile \
           --stack-name tpg-stack \
-          --parameter-overrides EnvType="${env}" DomainName="${domain}" BucketFilePath="${bucketurl}" DBFilePath="${dburl}" CrawlerFilePath="${crawlerurl}" \
+          --parameter-overrides EnvType="${env}" DomainName="${domain}" BucketFilePath="${bucketurl}" DBFilePath="${dburl}" \
           --capabilities CAPABILITY_IAM CAPABILITY_NAMED_IAM
   post_build:
     commands:
