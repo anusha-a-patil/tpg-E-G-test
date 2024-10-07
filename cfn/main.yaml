@@ -19,11 +19,41 @@ Parameters:
     Default: 'tpg-glue-db'  
     Description: 'Name of the Glue Database'
 
-# #Crawler Parameters
+#Crawler Parameters
   CrawlerName:
     Type: String
     Default: 'tpg-glue-crawler'
     Description: 'Name of the Glue Crawler'
+
+#Redshift Parameters
+  WorkgroupName:
+    Type: String
+    Default: 'tpg-workgroup'    
+    Description: 'Name of the Redshift Serverless workgroup'
+  NamespaceName:
+    Type: String
+    Default: 'tpg-namespace'     
+    Description: 'Name of the Redshift Serverless namespace'
+  RedshiftDatabaseName:
+    Type: String
+    Default: 'tpg-redshiftdb'    
+    Description: 'Name of the initial database to be created'
+  AdminUsername:
+    Type: String
+    Default: 'tpg-admin' #Use secrets Manager to store credentias    
+    Description: 'Admin username for the Redshift Serverless instance'
+  AdminUserPassword:
+    Type: String
+    Default: 'tpg-password' #Use secrets Manager to store credentias    
+    NoEcho: true
+    Description: 'Admin user password for the Redshift Serverless instance'
+  BaseCapacity:
+    Type: Number
+    Default: 32
+    Description: 'Base RPU capacity for the Redshift Serverless instance'
+  RedshiftStackUrl:
+    Type: String
+    Description: 'S3 URL of the nested stack template' 
 
 Resources:
   s3buckets:
@@ -81,7 +111,19 @@ Resources:
           - Path: !Sub 's3://${s3buckets.Outputs.LandingBucketName}'
       SchemaChangePolicy:
         UpdateBehavior: "UPDATE_IN_DATABASE"
-        DeleteBehavior: "LOG"  
+        DeleteBehavior: "LOG"
+
+  RedshiftServerlessStack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Ref RedshiftStackUrl
+      Parameters:
+        WorkgroupName: !Ref WorkgroupName
+        NamespaceName: !Ref NamespaceName
+        DatabaseName: !Ref RedshiftDatabaseName
+        AdminUsername: !Ref AdminUsername
+        AdminUserPassword: !Ref AdminUserPassword
+        BaseCapacity: !Ref BaseCapacity
 
 Outputs:
   LandingBucketName:
@@ -99,4 +141,11 @@ Outputs:
   CrawlerName:
     Description: 'Name of the created Glue Crawler'
     Value: !Ref CrawlerName
+  NamespaceArn:
+    Description: 'ARN of the Redshift Serverless Namespace'
+    Value: !GetAtt RedshiftServerlessStack.Outputs.NamespaceArn
+  WorkgroupArn:
+    Description: 'ARN of the Redshift Serverless Workgroup'
+    Value: !GetAtt RedshiftServerlessStack.Outputs.WorkgroupArn
+
 
