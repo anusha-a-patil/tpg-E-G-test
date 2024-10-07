@@ -26,32 +26,39 @@ Parameters:
     Description: 'Name of the Glue Crawler'
 
 #Redshift Parameters
-  WorkgroupName:
+Parameters:
+  ClusterIdentifier:
     Type: String
-    Default: 'tpg-workgroup'    
-    Description: 'Name of the Redshift Serverless workgroup'
-  NamespaceName:
+    Default: 'tpg-identifier'    
+    Description: 'The identifier of the cluster'
+  DatabaseName:
     Type: String
-    Default: 'tpg-namespace'     
-    Description: 'Name of the Redshift Serverless namespace'
-  RedshiftDatabaseName:
+    Default: 'tpg-database'    
+    Description: 'The name of the first database to be created when the cluster is created'
+  MasterUsername:
     Type: String
-    Default: 'tpg-redshiftdb'    
-    Description: 'Name of the initial database to be created'
-  AdminUsername:
+    Default: 'admin'    #Store the credentials in secretManager
+    Description: 'The user name associated with the master user account for the cluster'
+  MasterUserPassword:
     Type: String
-    Default: 'tpg-admin' #Use secrets Manager to store credentias    
-    Description: 'Admin username for the Redshift Serverless instance'
-  AdminUserPassword:
-    Type: String
-    Default: 'tpg-password' #Use secrets Manager to store credentias    
     NoEcho: true
-    Description: 'Admin user password for the Redshift Serverless instance'
-  BaseCapacity:
+    Default: 'password' #Store the credentials in secretManager
+    Description: 'The password associated with the master user account for the cluster'
+  NodeType:
+    Type: String
+    Default: dc2.large
+    Description: 'The node type to be provisioned for the cluster'
+  NumberOfNodes:
     Type: Number
-    Default: 32
-    Description: 'Base RPU capacity for the Redshift Serverless instance'
-  RedshiftStackUrl:
+    Default: 1
+    Description: 'The number of compute nodes in the cluster'
+  VpcId:
+    Type: AWS::EC2::VPC::Id
+    Description: 'The VPC ID where the cluster will be created'
+  SubnetIds:
+    Type: List<AWS::EC2::Subnet::Id>
+    Description: 'The list of VPC subnet IDs for the cluster'
+  NestedStackS3Url:
     Type: String
     Description: 'S3 URL of the nested stack template' 
 
@@ -113,39 +120,26 @@ Resources:
         UpdateBehavior: "UPDATE_IN_DATABASE"
         DeleteBehavior: "LOG"
 
-  RedshiftServerlessStack:
+  RedshiftStack:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: !Ref RedshiftStackUrl
+      TemplateURL: !Ref NestedStackS3Url
       Parameters:
-        WorkgroupName: !Ref WorkgroupName
-        NamespaceName: !Ref NamespaceName
-        DatabaseName: !Ref RedshiftDatabaseName
-        AdminUsername: !Ref AdminUsername
-        AdminUserPassword: !Ref AdminUserPassword
-        BaseCapacity: !Ref BaseCapacity
+        ClusterIdentifier: !Ref ClusterIdentifier
+        DatabaseName: !Ref DatabaseName
+        MasterUsername: !Ref MasterUsername
+        MasterUserPassword: !Ref MasterUserPassword
+        NodeType: !Ref NodeType
+        NumberOfNodes: !Ref NumberOfNodes
+        VpcId: !Ref VpcId
+        SubnetIds: !Join [',', !Ref SubnetIds]
 
 Outputs:
-  LandingBucketName:
-    Description: The name of the Landing S3 bucket
-    Value: !GetAtt s3buckets.Outputs.LandingBucketName
-  RawS3BucketName:
-    Description: The name of the Raw S3 bucket
-    Value: !GetAtt s3buckets.Outputs.RawS3BucketName
-  EnrichedS3BucketName:
-    Description: The name of the Enriched S3 bucket
-    Value: !GetAtt s3buckets.Outputs.EnrichedS3BucketName
-  DatabaseName:
-    Description: 'Name of the Glue Database'
-    Value: !Ref DatabaseName
-  CrawlerName:
-    Description: 'Name of the created Glue Crawler'
-    Value: !Ref CrawlerName
-  NamespaceArn:
-    Description: 'ARN of the Redshift Serverless Namespace'
-    Value: !GetAtt RedshiftServerlessStack.Outputs.NamespaceArn
-  WorkgroupArn:
-    Description: 'ARN of the Redshift Serverless Workgroup'
-    Value: !GetAtt RedshiftServerlessStack.Outputs.WorkgroupArn
+  ClusterEndpoint:
+    Description: 'Endpoint of the Redshift cluster'
+    Value: !GetAtt RedshiftStack.Outputs.ClusterEndpoint
+  ClusterPort:
+    Description: 'Port of the Redshift cluster'
+    Value: !GetAtt RedshiftStack.Outputs.ClusterPort
 
 
