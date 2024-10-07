@@ -37,7 +37,7 @@ Resources:
   GlueDatabase:
     Type: AWS::Glue::Database
     Properties:
-      # CatalogId: !Ref AWS::AccountId
+      CatalogId: !Ref AWS::AccountId
       DatabaseInput:
         Name: !Ref DatabaseName
         Description: "Database for storing metadata from Glue Crawler"
