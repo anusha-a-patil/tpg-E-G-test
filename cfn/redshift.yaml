@@ -41,7 +41,7 @@ Resources:
       PubliclyAccessible: false
       SubnetIds: !Ref SubnetIds
       SecurityGroupIds: 
-        - !Ref RedshiftServerlessSecurityGroup
+        - !Ref RedshiftServerlessSecurityGroup.GroupId
 
   RedshiftServerlessRole:
     Type: AWS::IAM::Role
@@ -51,7 +51,7 @@ Resources:
         Statement:
           - Effect: Allow
             Principal:
-              Service: redshift.amazonaws.com
+              Service: redshift-serverless.amazonaws.com
             Action: sts:AssumeRole
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/AmazonRedshiftAllCommandsFullAccess
