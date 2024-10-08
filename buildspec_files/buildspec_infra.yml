@@ -26,7 +26,7 @@ phases:
         redshiftfilename="redshift.yaml"
         redshiftfile=$CODEBUILD_SRC_DIR/cfn/"${redshiftfilename}"
         echo $redshiftfile
-        gluedbfilename="glue-database.yaml"
+        gluedbfilename="glue_database.yaml"
         gluedbfile=$CODEBUILD_SRC_DIR/cfn/"${gluedbfilename}"
         echo $gluedbfile
         aws s3 cp $bucketfile s3://mycicd-bucket-ap/cicd-files/
@@ -34,7 +34,7 @@ phases:
         aws s3 cp $gluedbfile s3://mycicd-bucket-ap/cicd-files/
         bucketurl=https://s3.amazonaws.com/mycicd-bucket-ap/cicd-files/bucket.yaml
         RedshiftUrl=https://s3.amazonaws.com/mycicd-bucket-ap/cicd-files/redshift.yaml
-        GlueDBurl=https://s3.amazonaws.com/mycicd-bucket-ap/cicd-files/glue-database.yaml
+        GlueDBurl=https://s3.amazonaws.com/mycicd-bucket-ap/cicd-files/glue_database.yaml
         aws cloudformation deploy \
           --template-file $cfnfile \
           --stack-name tpg-stack \
