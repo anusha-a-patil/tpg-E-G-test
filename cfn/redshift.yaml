@@ -41,7 +41,7 @@ Resources:
       PubliclyAccessible: false
       SubnetIds: !Ref SubnetIds
       SecurityGroupIds: 
-        - !Ref RedshiftServerlessSecurityGroup.GroupId
+        - !Ref RedshiftServerlessSecurityGroup
 
   RedshiftServerlessRole:
     Type: AWS::IAM::Role
