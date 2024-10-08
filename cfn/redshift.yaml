@@ -21,7 +21,7 @@ Parameters:
     Type: CommaDelimitedList
   VPCSecurityGroupIds:
     Description: Comma-separated list of security group IDs
-    Type:     Type: String
+    Type: String
 
 Resources:
   RedshiftServerlessNamespace:
