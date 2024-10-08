@@ -54,6 +54,10 @@ Parameters:
   RedshiftStackUrl:
     Type: String
     Description: 'S3 URL of the nested stack template'
+  SubnetIds:
+    Type: CommaDelimitedList
+    Description: 'Subnet Ids'  
+
 
 Resources:
   s3buckets:
@@ -124,6 +128,7 @@ Resources:
         AdminUsername: !Ref AdminUsername
         AdminUserPassword: !Ref AdminUserPassword
         BaseCapacity: !Ref BaseCapacity
+        SubnetIds: !Ref SubnetIds
 
 Outputs:
   LandingBucketName:
