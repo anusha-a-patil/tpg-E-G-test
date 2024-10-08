@@ -1,80 +1,75 @@
-# redshift-nested.yaml
 AWSTemplateFormatVersion: '2010-09-09'
-Description: 'Nested stack for creating Amazon Redshift cluster'
+Description: 'Nested stack for creating Amazon Redshift Serverless resources'
 
 Parameters:
-  ClusterIdentifier:
+  WorkgroupName:
     Type: String
-    Description: 'The identifier of the cluster'
-  
-  DatabaseName:
+  NamespaceName:
     Type: String
-    Description: 'The name of the first database to be created when the cluster is created'
-  
-  MasterUsername:
+  RedshiftDatabaseName:
     Type: String
-    Description: 'The user name associated with the master user account for the cluster'
-  
-  MasterUserPassword:
+  AdminUsername:
+    Type: String
+  AdminUserPassword:
     Type: String
     NoEcho: true
-    Description: 'The password associated with the master user account for the cluster'
-  
-  NodeType:
-    Type: String
-    Default: dc2.large
-    Description: 'The node type to be provisioned for the cluster'
-  
-  NumberOfNodes:
+  BaseCapacity:
     Type: Number
-    Default: 1
-    Description: 'The number of compute nodes in the cluster'
-  
-  VpcId:
-    Type: AWS::EC2::VPC::Id
-    Description: 'The VPC ID where the cluster will be created'
-  
-  SubnetIds:
-    Type: List<AWS::EC2::Subnet::Id>
-    Description: 'The list of VPC subnet IDs for the cluster'
+    Default: 32
 
 Resources:
-  RedshiftCluster:
-    Type: AWS::Redshift::Cluster
+  RedshiftServerlessNamespace:
+    Type: AWS::RedshiftServerless::Namespace
     Properties:
-      ClusterIdentifier: !Ref ClusterIdentifier
-      DBName: !Ref DatabaseName
-      MasterUsername: !Ref MasterUsername
-      MasterUserPassword: !Ref MasterUserPassword
-      NodeType: !Ref NodeType
-      NumberOfNodes: !Ref NumberOfNodes
-      ClusterSubnetGroupName: !Ref RedshiftSubnetGroup
-      VpcSecurityGroupIds: 
-        - !Ref RedshiftSecurityGroup
+      NamespaceName: !Ref NamespaceName
+      AdminUsername: !Ref AdminUsername
+      AdminUserPassword: !Ref AdminUserPassword
+      DbName: !Ref RedshiftDatabaseName
+      DefaultIamRoleArn: !GetAtt RedshiftServerlessRole.Arn
+
+  RedshiftServerlessWorkgroup:
+    Type: AWS::RedshiftServerless::Workgroup
+    Properties:
+      WorkgroupName: !Ref WorkgroupName
+      NamespaceName: !Ref NamespaceName
+      BaseCapacity: !Ref BaseCapacity
       PubliclyAccessible: false
-      Port: 5439
+      SecurityGroupIds: 
+        - !Ref RedshiftServerlessSecurityGroup
 
-  RedshiftSubnetGroup:
-    Type: AWS::Redshift::ClusterSubnetGroup
+  RedshiftServerlessRole:
+    Type: AWS::IAM::Role
     Properties:
-      Description: Subnet group for Redshift cluster
-      SubnetIds: !Ref SubnetIds
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: redshift.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AmazonRedshiftAllCommandsFullAccess
 
-  RedshiftSecurityGroup:
+  RedshiftServerlessSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
-      GroupDescription: Security group for Redshift cluster
-      VpcId: !Ref VpcId
+      GroupDescription: Security group for Redshift Serverless
       SecurityGroupIngress:
         - IpProtocol: tcp
           FromPort: 5439
           ToPort: 5439
-          CidrIp: 0.0.0.0/0  # Note: Adjust this for your security requirements
+          CidrIp: 0.0.0.0/0  # Note: Adjust as needed for your security requirements
 
 Outputs:
-  ClusterEndpoint:
-    Description: 'Endpoint of the Redshift cluster'
-    Value: !GetAtt RedshiftCluster.Endpoint.Address
-  ClusterPort:
-    Description: 'Port of the Redshift cluster'
-    Value: !GetAtt RedshiftCluster.Endpoint.Port
+  NamespaceArn:
+    Description: 'ARN of the Redshift Serverless Namespace'
+    Value: !GetAtt RedshiftServerlessNamespace.NamespaceArn
+  WorkgroupArn:
+    Description: 'ARN of the Redshift Serverless Workgroup'
+    Value: !GetAtt RedshiftServerlessWorkgroup.WorkgroupArn
+  RedshiftServerlessRoleArn:
+    Description: 'ARN of the IAM Role for Redshift Serverless'
+    Value: !GetAtt RedshiftServerlessRole.Arn
+  SecurityGroupId:
+    Description: 'ID of the Security Group for Redshift Serverless'
+    Value: !Ref RedshiftServerlessSecurityGroup

@@ -26,41 +26,34 @@ Parameters:
     Description: 'Name of the Glue Crawler'
 
 #Redshift Parameters
-Parameters:
-  ClusterIdentifier:
+  WorkgroupName:
     Type: String
-    Default: 'tpg-identifier'    
-    Description: 'The identifier of the cluster'
-  DatabaseName:
+    Default: 'tpg-redshift-workgroup'
+    Description: 'Name of the Redshift Serverless workgroup'
+  NamespaceName:
     Type: String
-    Default: 'tpg-database'    
-    Description: 'The name of the first database to be created when the cluster is created'
-  MasterUsername:
+    Default: 'tpg-redshift-namespace'    
+    Description: 'Name of the Redshift Serverless namespace'
+  RedshiftDatabaseName:
     Type: String
-    Default: 'admin'    #Store the credentials in secretManager
-    Description: 'The user name associated with the master user account for the cluster'
-  MasterUserPassword:
+    Default: 'tpg-redshift-database'
+    Description: 'Name of the initial database to be created'
+  AdminUsername:
     Type: String
+    Default: 'admin'
+    Description: 'Admin username for the Redshift Serverless instance'
+  AdminUserPassword:
+    Type: String
+    Default: 'Password'
     NoEcho: true
-    Default: 'password' #Store the credentials in secretManager
-    Description: 'The password associated with the master user account for the cluster'
-  NodeType:
-    Type: String
-    Default: dc2.large
-    Description: 'The node type to be provisioned for the cluster'
-  NumberOfNodes:
+    Description: 'Admin user password for the Redshift Serverless instance'
+  BaseCapacity:
     Type: Number
-    Default: 1
-    Description: 'The number of compute nodes in the cluster'
-  VpcId:
-    Type: AWS::EC2::VPC::Id
-    Description: 'The VPC ID where the cluster will be created'
-  SubnetIds:
-    Type: List<AWS::EC2::Subnet::Id>
-    Description: 'The list of VPC subnet IDs for the cluster'
-  NestedStackS3Url:
+    Default: 32
+    Description: 'Base RPU capacity for the Redshift Serverless instance'
+  RedshiftStackUrl:
     Type: String
-    Description: 'S3 URL of the nested stack template' 
+    Description: 'S3 URL of the nested stack template'
 
 Resources:
   s3buckets:
@@ -123,23 +116,42 @@ Resources:
   RedshiftStack:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: !Ref NestedStackS3Url
+      TemplateURL: !Ref RedshiftStackUrl
       Parameters:
-        ClusterIdentifier: !Ref ClusterIdentifier
-        DatabaseName: !Ref DatabaseName
-        MasterUsername: !Ref MasterUsername
-        MasterUserPassword: !Ref MasterUserPassword
-        NodeType: !Ref NodeType
-        NumberOfNodes: !Ref NumberOfNodes
-        VpcId: !Ref VpcId
-        SubnetIds: !Join [',', !Ref SubnetIds]
+        WorkgroupName: !Ref WorkgroupName
+        NamespaceName: !Ref NamespaceName
+        RedshiftDatabaseName: !Ref RedshiftDatabaseName
+        AdminUsername: !Ref AdminUsername
+        AdminUserPassword: !Ref AdminUserPassword
+        BaseCapacity: !Ref BaseCapacity
 
 Outputs:
-  ClusterEndpoint:
-    Description: 'Endpoint of the Redshift cluster'
-    Value: !GetAtt RedshiftStack.Outputs.ClusterEndpoint
-  ClusterPort:
-    Description: 'Port of the Redshift cluster'
-    Value: !GetAtt RedshiftStack.Outputs.ClusterPort
+  LandingBucketName:
+    Description: The name of the Landing S3 bucket
+    Value: !GetAtt s3buckets.Outputs.LandingBucketName
+  RawS3BucketName:
+    Description: The name of the Raw S3 bucket
+    Value: !GetAtt s3buckets.Outputs.RawS3BucketName
+  EnrichedS3BucketName:
+    Description: The name of the Enriched S3 bucket
+    Value: !GetAtt s3buckets.Outputs.EnrichedS3BucketName
+  DatabaseName:
+    Description: 'Name of the Glue Database'
+    Value: !Ref DatabaseName
+  CrawlerName:
+    Description: 'Name of the created Glue Crawler'
+    Value: !Ref CrawlerName
+  NamespaceArn:
+    Description: 'ARN of the Redshift Serverless Namespace'
+    Value: !GetAtt RedshiftStack.Outputs.NamespaceArn
+  WorkgroupArn:
+    Description: 'ARN of the Redshift Serverless Workgroup'
+    Value: !GetAtt RedshiftStack.Outputs.WorkgroupArn
+  RedshiftServerlessRoleArn:
+    Description: 'ARN of the IAM Role for Redshift Serverless'
+    Value: !GetAtt RedshiftStack.Outputs.RedshiftServerlessRoleArn
+  SecurityGroupId:
+    Description: 'ID of the Security Group for Redshift Serverless'
+    Value: !GetAtt RedshiftStack.Outputs.SecurityGroupId
 
 
