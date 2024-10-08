@@ -44,7 +44,7 @@ Parameters:
     Description: 'Admin username for the Redshift Serverless instance'
   AdminUserPassword:
     Type: String
-    Default: 'Password'
+    Default: 'Password28'
     NoEcho: true
     Description: 'Admin user password for the Redshift Serverless instance'
   BaseCapacity:
