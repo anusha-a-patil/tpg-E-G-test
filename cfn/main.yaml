@@ -129,7 +129,6 @@ Resources:
         AdminUserPassword: !Ref AdminUserPassword
         BaseCapacity: !Ref BaseCapacity
         SubnetIds: !Ref SubnetIds
-        VPCSecurityGroupIds: !Ref VPCSecurityGroupIds
 
 
 Outputs:
