@@ -20,13 +20,16 @@ Parameters:
     Description: 'Name of the Glue Database'
   GlueDBPath:
     Type: String
-    Description: bucket yaml path    
+    Description: Database yaml path    
 
 #Crawler Parameters
   CrawlerName:
     Type: String
     Default: 'tpg-glue-crawler'
     Description: 'Name of the Glue Crawler'
+  GlueCrawlerPath:
+    Type: String
+    Description: Crawler yaml path    
 
 #Redshift Parameters
   WorkgroupName:
@@ -78,46 +81,14 @@ Resources:
       Parameters:
         DatabaseName: !Ref DatabaseName
 
-  GlueCrawlerRole:
-    Type: AWS::IAM::Role
-    Properties:
-      AssumeRolePolicyDocument:
-        Version: '2012-10-17'
-        Statement:
-          - Effect: Allow
-            Principal:
-              Service:
-                - glue.amazonaws.com
-            Action:
-              - sts:AssumeRole
-      Path: "/"
-      ManagedPolicyArns:
-        - arn:aws:iam::aws:policy/service-role/AWSGlueServiceRole
-      Policies:
-        - PolicyName: S3Access
-          PolicyDocument:
-            Version: '2012-10-17'
-            Statement:
-              - Effect: Allow
-                Action:
-                  - s3:GetObject
-                  - s3:ListBucket
-                Resource:
-                  - !Sub 'arn:aws:s3:::${s3buckets.Outputs.LandingBucketName}'
-                  - !Sub 'arn:aws:s3:::${s3buckets.Outputs.LandingBucketName}/*'
-
   GlueCrawler:
-    Type: AWS::Glue::Crawler
+    Type: AWS::CloudFormation::Stack
     Properties:
-      Name: !Ref CrawlerName
-      Role: !GetAtt GlueCrawlerRole.Arn
-      DatabaseName: !Ref DatabaseName
-      Targets:
-        S3Targets:
-          - Path: !Sub 's3://${s3buckets.Outputs.LandingBucketName}'
-      SchemaChangePolicy:
-        UpdateBehavior: "UPDATE_IN_DATABASE"
-        DeleteBehavior: "LOG"
+      TemplateURL: !Ref GlueCrawlerPath
+      Parameters:
+        CrawlerName: !Ref CrawlerName
+        DatabaseName: !GetAtt GlueDatabase.Outputs.DatabaseName
+        S3TargetPath: !GetAtt s3buckets.Outputs.LandingBucketName
 
   RedshiftStack:
     Type: AWS::CloudFormation::Stack
@@ -145,10 +116,10 @@ Outputs:
     Value: !GetAtt s3buckets.Outputs.EnrichedS3BucketName
   DatabaseName:
     Description: 'Name of the Glue Database'
-    Value: !Ref DatabaseName
+    Value:  !GetAtt GlueDatabase.Outputs.DatabaseName
   CrawlerName:
     Description: 'Name of the created Glue Crawler'
-    Value: !Ref CrawlerName
+    Value:  !GetAtt GlueCrawler.Outputs.CrawlerName
   NamespaceArn:
     Description: 'ARN of the Redshift Serverless Namespace'
     Value: !GetAtt RedshiftStack.Outputs.NamespaceArn
