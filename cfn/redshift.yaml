@@ -29,6 +29,8 @@ Resources:
       AdminUserPassword: !Ref AdminUserPassword
       DbName: !Ref RedshiftDatabaseName
       DefaultIamRoleArn: !GetAtt RedshiftServerlessRole.Arn
+      IamRoles: 
+        - !GetAtt RedshiftServerlessRole.Arn
 
   RedshiftServerlessWorkgroup:
     Type: AWS::RedshiftServerless::Workgroup
