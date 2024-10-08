@@ -72,7 +72,7 @@ Resources:
         DomainName: !Ref DomainName
 
   GlueDatabase:
-    Type: AWS::Glue::Database
+    Type: AWS::CloudFormation::Stack
     Properties:
       TemplateURL: !Ref GlueDBPath
       Parameters:
