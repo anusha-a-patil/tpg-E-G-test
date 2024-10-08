@@ -19,9 +19,6 @@ Parameters:
   SubnetIds:
     Description: Comma-separated list of subnet IDs for the Redshift Serverless workgroup
     Type: CommaDelimitedList
-  VPCSecurityGroupIds:
-    Description: Comma-separated list of security group IDs
-    Type: String
 
 Resources:
   RedshiftServerlessNamespace:
@@ -43,7 +40,8 @@ Resources:
       BaseCapacity: !Ref BaseCapacity
       PubliclyAccessible: false
       SubnetIds: !Ref SubnetIds
-      SecurityGroupIds: !Ref VPCSecurityGroupIds
+      SecurityGroupIds: 
+        - !Ref RedshiftServerlessSecurityGroup
 
   RedshiftServerlessRole:
     Type: AWS::IAM::Role
@@ -61,6 +59,7 @@ Resources:
   RedshiftServerlessSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
+      VpcId: 'vpc-0e22305d886064b94'
       GroupDescription: Security group for Redshift Serverless
       SecurityGroupIngress:
         - IpProtocol: tcp
