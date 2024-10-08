@@ -69,9 +69,9 @@ Resources:
           CidrIp: 0.0.0.0/0  # Note: Adjust as needed for your security requirements
 
 Outputs:
-  NamespaceArn:
+  NamespaceName:
     Description: 'ARN of the Redshift Serverless Namespace'
-    Value: !GetAtt RedshiftServerlessNamespace.NamespaceArn
+    Value: !Ref RedshiftServerlessNamespace
   WorkgroupArn:
     Description: 'ARN of the Redshift Serverless Workgroup'
     Value: !GetAtt RedshiftServerlessWorkgroup.WorkgroupArn

@@ -18,6 +18,9 @@ Parameters:
     Type: String
     Default: 'tpg-glue-db'  
     Description: 'Name of the Glue Database'
+  GlueDBPath:
+    Type: String
+    Description: bucket yaml path    
 
 #Crawler Parameters
   CrawlerName:
@@ -71,10 +74,9 @@ Resources:
   GlueDatabase:
     Type: AWS::Glue::Database
     Properties:
-      CatalogId: !Ref AWS::AccountId
-      DatabaseInput:
-        Name: !Ref DatabaseName
-        Description: "Database for storing metadata from Glue Crawler"
+      TemplateURL: !Ref GlueDBPath
+      Parameters:
+        DatabaseName: !Ref DatabaseName
 
   GlueCrawlerRole:
     Type: AWS::IAM::Role

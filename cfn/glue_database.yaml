@@ -4,7 +4,6 @@ Description: 'AWS Glue Database CloudFormation Template'
 Parameters:
   DatabaseName:
     Type: String
-    Default: 'my-glue-database'
     Description: 'Name of the Glue Database'
 
 Resources:

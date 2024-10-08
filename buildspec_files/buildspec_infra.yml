@@ -25,15 +25,20 @@ phases:
         echo $bucketfile
         redshiftfilename="redshift.yaml"
         redshiftfile=$CODEBUILD_SRC_DIR/cfn/"${redshiftfilename}"
-        echo $redshiftfile        
+        echo $redshiftfile
+        gluedbfilename="glue-database.yaml"
+        gluedbfile=$CODEBUILD_SRC_DIR/cfn/"${gluedbfilename}"
+        echo $gluedbfile
         aws s3 cp $bucketfile s3://mycicd-bucket-ap/cicd-files/
         aws s3 cp $redshiftfile s3://mycicd-bucket-ap/cicd-files/
+        aws s3 cp $gluedbfile s3://mycicd-bucket-ap/cicd-files/
         bucketurl=https://s3.amazonaws.com/mycicd-bucket-ap/cicd-files/bucket.yaml
         RedshiftUrl=https://s3.amazonaws.com/mycicd-bucket-ap/cicd-files/redshift.yaml
+        GlueDBurl=https://s3.amazonaws.com/mycicd-bucket-ap/cicd-files/glue-database.yaml
         aws cloudformation deploy \
           --template-file $cfnfile \
           --stack-name tpg-stack \
-          --parameter-overrides EnvType="${env}" DomainName="${domain}" BucketFilePath="${bucketurl}" RedshiftStackUrl="${RedshiftUrl}" \
+          --parameter-overrides EnvType="${env}" DomainName="${domain}" BucketFilePath="${bucketurl}" RedshiftStackUrl="${RedshiftUrl}" GlueDBPath="${GlueDBurl}" \
           --capabilities CAPABILITY_IAM CAPABILITY_NAMED_IAM
   post_build:
     commands:
