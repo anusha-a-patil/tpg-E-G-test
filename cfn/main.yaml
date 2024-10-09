@@ -120,9 +120,9 @@ Outputs:
   CrawlerName:
     Description: 'Name of the created Glue Crawler'
     Value:  !GetAtt GlueCrawler.Outputs.CrawlerName
-  NamespaceArn:
-    Description: 'ARN of the Redshift Serverless Namespace'
-    Value: !GetAtt RedshiftStack.Outputs.NamespaceArn
+  NamespaceName:
+    Description: 'Name of the Redshift Serverless Namespace'
+    Value: !GetAtt RedshiftStack.Outputs.NamespaceName
   WorkgroupArn:
     Description: 'ARN of the Redshift Serverless Workgroup'
     Value: !GetAtt RedshiftStack.Outputs.WorkgroupArn
