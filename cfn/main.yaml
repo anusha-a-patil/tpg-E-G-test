@@ -123,9 +123,9 @@ Outputs:
   NamespaceName:
     Description: 'Name of the Redshift Serverless Namespace'
     Value: !GetAtt RedshiftStack.Outputs.NamespaceName
-  WorkgroupArn:
-    Description: 'ARN of the Redshift Serverless Workgroup'
-    Value: !GetAtt RedshiftStack.Outputs.WorkgroupArn
+  # WorkgroupArn:
+  #   Description: 'ARN of the Redshift Serverless Workgroup'
+  #   Value: !GetAtt RedshiftStack.Outputs.WorkgroupArn
   RedshiftServerlessRoleArn:
     Description: 'ARN of the IAM Role for Redshift Serverless'
     Value: !GetAtt RedshiftStack.Outputs.RedshiftServerlessRoleArn
