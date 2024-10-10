@@ -14,7 +14,7 @@ Resources:
     Type: AWS::LakeFormation::DataLakeSettings
     Properties:
       Admins: 
-        - DataLakePrincipalIdentifier: !Ref LakeFormationAdminRoleArn
+        - DataLakePrincipalIdentifier: !GetAtt LakeFormationAdminRole.Arn
 
   LakeFormationResource:
     Type: AWS::LakeFormation::Resource
@@ -26,7 +26,7 @@ Resources:
     Type: AWS::LakeFormation::Permissions
     Properties:
       DataLakePrincipal:
-        DataLakePrincipalIdentifier: !Ref LakeFormationAdminRoleArn
+        DataLakePrincipalIdentifier: !GetAtt LakeFormationAdminRole.Arn
       Resource:
         DatabaseResource:
           Name: !Ref DatabaseName
@@ -57,7 +57,7 @@ Resources:
             Action:
               - sts:AssumeRole
       ManagedPolicyArns:
-        - arn:aws:iam::aws:policy/AWSLakeFormationDataAdmin        
+        - arn:aws:iam::aws:policy/AWSLakeFormationDataAdmin
 
 Outputs:
   LakeFormationAdminRoleArn:
