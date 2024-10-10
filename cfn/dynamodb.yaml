@@ -1,0 +1,40 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'Nested stack for creating a DynamoDB table'
+
+Parameters:
+  TableName:
+    Type: String
+    Description: 'Name of the DynamoDB table'
+  ReadCapacityUnits:
+    Type: Number
+    Description: 'Read capacity units for the table'
+  WriteCapacityUnits:
+    Type: Number
+    Description: 'Write capacity units for the table'
+
+Resources:
+  DynamoDBTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Ref TableName
+      AttributeDefinitions:
+        - AttributeName: 'id'
+          AttributeType: 'S'
+        - AttributeName: 'sortKey'
+          AttributeType: 'S'
+      KeySchema:
+        - AttributeName: 'id'
+          KeyType: 'HASH'
+        - AttributeName: 'sortKey'
+          KeyType: 'RANGE'
+      ProvisionedThroughput:
+        ReadCapacityUnits: !Ref ReadCapacityUnits
+        WriteCapacityUnits: !Ref WriteCapacityUnits
+      Tags:
+        - Key: 'Environment'
+          Value: 'Production'
+
+Outputs:
+  TableName:
+    Description: 'Name of the created DynamoDB table'
+    Value: !Ref DynamoDBTable

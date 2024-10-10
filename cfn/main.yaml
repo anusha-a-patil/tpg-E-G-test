@@ -64,6 +64,24 @@ Parameters:
     Type: String
     Description: 'Subnet Ids'
     Default: subnet-0e02df7b9e58e3960,subnet-05d7a985f0bdf9b64,subnet-04fc4b2eacf4f1df4
+#Dynamo DB Parameters
+  TableName:
+    Type: String
+    Description: 'Name of the DynamoDB table'
+    Default: 'my-dynamodb-table'
+  ReadCapacityUnits:
+    Type: Number
+    Description: 'Read capacity units for the table'
+    Default: 5
+    MinValue: 1
+  WriteCapacityUnits:
+    Type: Number
+    Description: 'Write capacity units for the table'
+    Default: 5
+    MinValue: 1
+  DynamoDBStackUrl:
+    Type: String
+    Description: 'S3 URL of the nested stack template'
 
 Resources:
   s3buckets:
@@ -103,6 +121,14 @@ Resources:
         BaseCapacity: !Ref BaseCapacity
         SubnetIds: !Ref SubnetIds
 
+  DynamoDBStack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Ref DynamoDBStackUrl
+      Parameters:
+        TableName: !Ref TableName
+        ReadCapacityUnits: !Ref ReadCapacityUnits
+        WriteCapacityUnits: !Ref WriteCapacityUnits
 
 Outputs:
   LandingBucketName:
@@ -132,5 +158,8 @@ Outputs:
   SecurityGroupId:
     Description: 'ID of the Security Group for Redshift Serverless'
     Value: !GetAtt RedshiftStack.Outputs.SecurityGroupId
+  TableName:
+    Description: 'Name of the created DynamoDB table'
+    Value: !GetAtt DynamoDBStack.Outputs.TableName
 
 
