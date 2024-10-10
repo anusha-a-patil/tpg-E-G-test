@@ -89,7 +89,9 @@ Resources:
                   - lakeformation:CreateLFTag
                   - lakeformation:DeleteLFTag
                   - lakeformation:UpdateLFTag
-                Resource: '*'        
+                  - lakeformation:GrantPermissions
+                  - lakeformation:DescribeLFTag
+                Resource: '*'
 
 Outputs:
   LakeFormationAdminRoleArn:
