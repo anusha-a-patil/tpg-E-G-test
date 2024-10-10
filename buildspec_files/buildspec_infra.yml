@@ -35,20 +35,25 @@ phases:
         dynamodbfilename="dynamodb.yaml"
         dynamodbfile=$CODEBUILD_SRC_DIR/cfn/"${dynamodbfilename}"
         echo $dynamodbfile
+        lffilename="lakeformation.yaml"
+        lffile=$CODEBUILD_SRC_DIR/cfn/"${lffilename}"
+        echo $lffile
         aws s3 cp $bucketfile s3://mycicd-bucket-ap/cicd-files/
         aws s3 cp $redshiftfile s3://mycicd-bucket-ap/cicd-files/
         aws s3 cp $gluedbfile s3://mycicd-bucket-ap/cicd-files/
         aws s3 cp $gluecrawlerfile s3://mycicd-bucket-ap/cicd-files/
         aws s3 cp $dynamodbfile s3://mycicd-bucket-ap/cicd-files/
+        aws s3 cp $lffile s3://mycicd-bucket-ap/cicd-files/
         bucketurl=https://s3.amazonaws.com/mycicd-bucket-ap/cicd-files/bucket.yaml
         RedshiftUrl=https://s3.amazonaws.com/mycicd-bucket-ap/cicd-files/redshift.yaml
         GlueDBurl=https://s3.amazonaws.com/mycicd-bucket-ap/cicd-files/glue_database.yaml
         GlueCrawlerurl=https://s3.amazonaws.com/mycicd-bucket-ap/cicd-files/glue_crawler.yaml
         dynamodburl=https://s3.amazonaws.com/mycicd-bucket-ap/cicd-files/dynamodb.yaml
+        lfurl=https://s3.amazonaws.com/mycicd-bucket-ap/cicd-files/lakeformation.yaml
         aws cloudformation deploy \
           --template-file $cfnfile \
           --stack-name tpg-stack \
-          --parameter-overrides EnvType="${env}" DomainName="${domain}" BucketFilePath="${bucketurl}" RedshiftStackUrl="${RedshiftUrl}" GlueDBPath="${GlueDBurl}" GlueCrawlerPath="${GlueCrawlerurl}" DynamoDBStackUrl="${dynamodburl}" \
+          --parameter-overrides EnvType="${env}" DomainName="${domain}" BucketFilePath="${bucketurl}" RedshiftStackUrl="${RedshiftUrl}" GlueDBPath="${GlueDBurl}" GlueCrawlerPath="${GlueCrawlerurl}" DynamoDBStackUrl="${dynamodburl}" LFStackUrl="${lfurl}" \
           --capabilities CAPABILITY_IAM CAPABILITY_NAMED_IAM
   post_build:
     commands:

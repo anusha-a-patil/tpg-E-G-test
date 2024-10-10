@@ -81,7 +81,12 @@ Parameters:
     MinValue: 1
   DynamoDBStackUrl:
     Type: String
-    Description: 'S3 URL of the nested stack template'
+    Description: 'Dynamo DB S3 URL of the nested stack template'
+
+#LF Parameters
+  LFStackUrl:
+    Type: String
+    Description: 'LF Stack S3 URL of the nested stack template'
 
 Resources:
   s3buckets:
@@ -129,6 +134,15 @@ Resources:
         TableName: !Ref TableName
         ReadCapacityUnits: !Ref ReadCapacityUnits
         WriteCapacityUnits: !Ref WriteCapacityUnits
+
+  LakeFormationStack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Ref LFStackUrl
+      Parameters:
+        DataLakeBucketName: !GetAtt s3buckets.Outputs.EnrichedS3BucketName
+        DatabaseName: !GetAtt GlueDatabase.Outputs.DatabaseName
+
 
 Outputs:
   LandingBucketName:

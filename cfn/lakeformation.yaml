@@ -1,0 +1,65 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'Nested stack for creating AWS Lake Formation resources'
+
+Parameters:
+  DataLakeBucketName:
+    Type: String
+    Description: 'Name of the S3 bucket to use as the data lake'
+  DatabaseName:
+    Type: String
+    Description: 'Name of the Glue/Lake Formation database to create'
+
+Resources:
+  LakeFormationDataLakeSettings:
+    Type: AWS::LakeFormation::DataLakeSettings
+    Properties:
+      Admins: 
+        - DataLakePrincipalIdentifier: !Ref LakeFormationAdminRoleArn
+
+  LakeFormationResource:
+    Type: AWS::LakeFormation::Resource
+    Properties:
+      ResourceArn: !Sub 'arn:aws:s3:::${DataLakeBucketName}'
+      UseServiceLinkedRole: true
+
+  LakeFormationPermissions:
+    Type: AWS::LakeFormation::Permissions
+    Properties:
+      DataLakePrincipal:
+        DataLakePrincipalIdentifier: !Ref LakeFormationAdminRoleArn
+      Resource:
+        DatabaseResource:
+          Name: !Ref DatabaseName
+      Permissions:
+        - CREATE_TABLE
+        - ALTER
+        - DROP
+
+  LFTag:
+    Type: AWS::LakeFormation::Tag
+    Properties:
+      TagKey: 'Environment'
+      TagValues: 
+        - 'Development'
+        - 'Production'
+
+  LakeFormationAdminRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lakeformation.amazonaws.com
+                - glue.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AWSLakeFormationDataAdmin        
+
+Outputs:
+  LakeFormationAdminRoleArn:
+    Description: 'LakeFormation IAM ROle'
+    Value: !GetAtt LakeFormationAdminRole.Arn
