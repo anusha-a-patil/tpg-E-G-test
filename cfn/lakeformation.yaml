@@ -35,13 +35,13 @@ Resources:
         - ALTER
         - DROP
 
-  LFTag:
-    Type: AWS::LakeFormation::Tag
-    Properties:
-      TagKey: 'Environment'
-      TagValues: 
-        - 'Development'
-        - 'Production'
+  # LFTag:
+  #   Type: AWS::LakeFormation::Tag
+  #   Properties:
+  #     TagKey: 'Environment'
+  #     TagValues: 
+  #       - 'Development'
+  #       - 'Production'
 
   LakeFormationAdminRole:
     Type: AWS::IAM::Role
