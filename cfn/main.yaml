@@ -117,7 +117,7 @@ Resources:
         DatabaseName: !GetAtt GlueDatabase.Outputs.DatabaseName
         S3TargetPath: !GetAtt s3buckets.Outputs.LandingBucketName
 
-  RedshiftStack:
+  RedshiftserverlessStack:
     Type: AWS::CloudFormation::Stack
     Properties:
       TemplateURL: !Ref RedshiftStackUrl
