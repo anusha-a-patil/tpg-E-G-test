@@ -4,8 +4,10 @@ Description: 'Nested stack for creating Amazon Redshift Serverless resources'
 Parameters:
   WorkgroupName:
     Type: String
-  NamespaceName:
+  NamespaceName1:
     Type: String
+  NamespaceName2:
+    Type: String        
   RedshiftDatabaseName:
     Type: String
   AdminUsername:
@@ -21,23 +23,36 @@ Parameters:
     Type: CommaDelimitedList
 
 Resources:
-  RedshiftServerlessNamespace:
+  RedshiftServerlessNamespace1:
     Type: AWS::RedshiftServerless::Namespace
     Properties:
-      NamespaceName: !Ref NamespaceName
+      NamespaceName: !Ref NamespaceName1
       AdminUsername: !Ref AdminUsername
       AdminUserPassword: !Ref AdminUserPassword
       DbName: !Ref RedshiftDatabaseName
       DefaultIamRoleArn: !GetAtt RedshiftServerlessRole.Arn
       IamRoles: 
         - !GetAtt RedshiftServerlessRole.Arn
+      WorkgroupName: !Ref WorkgroupName        
+
+    RedshiftServerlessNamespace2:
+    Type: AWS::RedshiftServerless::Namespace
+    Properties:
+      NamespaceName: !Ref NamespaceName2
+      AdminUsername: !Ref AdminUsername
+      AdminUserPassword: !Ref AdminUserPassword
+      DbName: !Ref RedshiftDatabaseName
+      DefaultIamRoleArn: !GetAtt RedshiftServerlessRole.Arn
+      IamRoles: 
+        - !GetAtt RedshiftServerlessRole.Arn
+      WorkgroupName: !Ref WorkgroupName            
 
   RedshiftServerlessWorkgroup:
     Type: AWS::RedshiftServerless::Workgroup
     DependsOn: RedshiftServerlessNamespace
     Properties:
       WorkgroupName: !Ref WorkgroupName
-      NamespaceName: !Ref NamespaceName
+      # NamespaceName: !Ref NamespaceName
       BaseCapacity: !Ref BaseCapacity
       PubliclyAccessible: false
       SubnetIds: !Ref SubnetIds
@@ -69,9 +84,12 @@ Resources:
           CidrIp: 0.0.0.0/0  # Note: Adjust as needed for your security requirements
 
 Outputs:
-  NamespaceName:
+  NamespaceName1:
     Description: 'ARN of the Redshift Serverless Namespace'
-    Value: !Ref RedshiftServerlessNamespace
+    Value: !Ref RedshiftServerlessNamespace1
+  NamespaceName2:
+    Description: 'ARN of the Redshift Serverless Namespace'
+    Value: !Ref RedshiftServerlessNamespace2  
   # WorkgroupArn:
   #   Description: 'ARN of the Redshift Serverless Workgroup'
   #   Value: !GetAtt RedshiftServerlessWorkgroup.WorkgroupArn
