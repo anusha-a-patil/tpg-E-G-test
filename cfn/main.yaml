@@ -34,19 +34,19 @@ Parameters:
 #Redshift Parameters
   WorkgroupName:
     Type: String
-    Default: 'tg-redshift-workgroup'
+    Default: 'tpg-redshift-workgroup'
     Description: 'Name of the Redshift Serverless workgroup'
   NamespaceName1:
     Type: String
-    Default: 'tg-redshift-namespace1'
+    Default: 'tpg-redshift-namespace1'
     Description: 'Name of the Redshift Serverless namespace'
   NamespaceName2:
     Type: String
-    Default: 'tg-redshift-namespace2'
+    Default: 'tpg-redshift-namespace2'
     Description: 'Name of the Redshift Serverless namespace'    
   RedshiftDatabaseName:
     Type: String
-    Default: 'tg-redshift-database'
+    Default: 'tpg-redshift-database'
     Description: 'Name of the initial database to be created'
   AdminUsername:
     Type: String
