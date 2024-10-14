@@ -38,7 +38,7 @@ Parameters:
     Description: 'Name of the Redshift Serverless workgroup'
   NamespaceName1:
     Type: String
-    Default: 'tg-redshift-namespace1'    
+    Default: 'tg-redshift-namespace1'
     Description: 'Name of the Redshift Serverless namespace'
   NamespaceName2:
     Type: String

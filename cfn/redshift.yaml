@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: '2010-09-09'
-Description: 'Nested stack for creating Amazon Redshift Serverless resources'
+Description: 'Nested stack for creating Amazon Redshift Serverless resources '
 
 Parameters:
   WorkgroupName:
@@ -35,7 +35,7 @@ Resources:
         - !GetAtt RedshiftServerlessRole.Arn
       WorkgroupName: !Ref WorkgroupName
 
-    RedshiftServerlessNamespace2:
+  RedshiftServerlessNamespace2:
     Type: AWS::RedshiftServerless::Namespace
     Properties:
       NamespaceName: !Ref NamespaceName2
@@ -43,7 +43,7 @@ Resources:
       AdminUserPassword: !Ref AdminUserPassword
       DbName: !Ref RedshiftDatabaseName
       DefaultIamRoleArn: !GetAtt RedshiftServerlessRole.Arn
-      IamRoles: 
+      IamRoles:
         - !GetAtt RedshiftServerlessRole.Arn
       WorkgroupName: !Ref WorkgroupName
 
