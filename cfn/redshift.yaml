@@ -33,7 +33,6 @@ Resources:
       DefaultIamRoleArn: !GetAtt RedshiftServerlessRole.Arn
       IamRoles: 
         - !GetAtt RedshiftServerlessRole.Arn
-      WorkgroupName: !Ref WorkgroupName
 
   RedshiftServerlessNamespace2:
     Type: AWS::RedshiftServerless::Namespace
@@ -45,7 +44,6 @@ Resources:
       DefaultIamRoleArn: !GetAtt RedshiftServerlessRole.Arn
       IamRoles:
         - !GetAtt RedshiftServerlessRole.Arn
-      WorkgroupName: !Ref WorkgroupName
 
   RedshiftServerlessWorkgroup:
     Type: AWS::RedshiftServerless::Workgroup
@@ -60,6 +58,7 @@ Resources:
       SubnetIds: !Ref SubnetIds
       SecurityGroupIds: 
         - !Ref RedshiftServerlessSecurityGroup
+      NamespaceName: !Ref NamespaceName1        
 
   RedshiftServerlessRole:
     Type: AWS::IAM::Role
