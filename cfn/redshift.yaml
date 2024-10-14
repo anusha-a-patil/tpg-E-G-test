@@ -49,7 +49,9 @@ Resources:
 
   RedshiftServerlessWorkgroup:
     Type: AWS::RedshiftServerless::Workgroup
-    DependsOn: RedshiftServerlessNamespace
+    DependsOn: 
+      - RedshiftServerlessNamespace1
+      - RedshiftServerlessNamespace2
     Properties:
       WorkgroupName: !Ref WorkgroupName
       # NamespaceName: !Ref NamespaceName
