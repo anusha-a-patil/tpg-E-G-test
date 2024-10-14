@@ -38,11 +38,11 @@ Parameters:
     Description: 'Name of the Redshift Serverless workgroup'
   NamespaceName1:
     Type: String
-    Default: 'tg-redshift-namespace'    
+    Default: 'tg-redshift-namespace1'    
     Description: 'Name of the Redshift Serverless namespace'
   NamespaceName2:
     Type: String
-    Default: 'tg-redshift-namespace'
+    Default: 'tg-redshift-namespace2'
     Description: 'Name of the Redshift Serverless namespace'    
   RedshiftDatabaseName:
     Type: String
@@ -165,9 +165,12 @@ Outputs:
   CrawlerName:
     Description: 'Name of the created Glue Crawler'
     Value:  !GetAtt GlueCrawler.Outputs.CrawlerName
-  NamespaceName:
+  NamespaceName1:
     Description: 'Name of the Redshift Serverless Namespace'
-    Value: !GetAtt RedshiftStack.Outputs.NamespaceName
+    Value: !GetAtt RedshiftStack.Outputs.NamespaceName1
+  NamespaceName2:
+    Description: 'Name of the Redshift Serverless Namespace'
+    Value: !GetAtt RedshiftStack.Outputs.NamespaceName2   
   # WorkgroupArn:
   #   Description: 'ARN of the Redshift Serverless Workgroup'
   #   Value: !GetAtt RedshiftStack.Outputs.WorkgroupArn
