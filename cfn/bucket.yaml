@@ -18,7 +18,7 @@ Resources:
       BucketName: 
          Fn::Join:
           - "-"
-          - [ !Ref EnvType, !Ref DomainName, "landing-bucket-tpg"]
+          - [ "tpgt", !Ref DomainName, !Ref EnvType, "landing"]
       BucketEncryption:
         ServerSideEncryptionConfiguration:
         - ServerSideEncryptionByDefault:
@@ -32,13 +32,31 @@ Resources:
             Status: Enabled
             NoncurrentVersionExpirationInDays: 30
 
+  LandingBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref LandingS3Bucket
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Sid: AllowOnlyHttpsRequests
+            Effect: Deny
+            Principal: "*"
+            Action: "s3:*"
+            Resource: 
+              - !Sub "arn:aws:s3:::${LandingS3Bucket}"
+              - !Sub "arn:aws:s3:::${LandingS3Bucket}/*"
+            Condition:
+              Bool:
+                aws:SecureTransport: "false"      
+
   RawS3Bucket:
     Type: 'AWS::S3::Bucket'
     Properties:
       BucketName: 
          Fn::Join:
           - "-"
-          - [ !Ref EnvType, !Ref DomainName, "raw-bucket-tpg"]
+          - [ "tpgt", !Ref DomainName, !Ref EnvType, "raw"]
       BucketEncryption:
         ServerSideEncryptionConfiguration:
           - ServerSideEncryptionByDefault:
@@ -52,13 +70,31 @@ Resources:
             Status: Enabled
             NoncurrentVersionExpirationInDays: 30
 
-  EnrichedS3Bucket:
+  RawBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref RawS3Bucket
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Sid: AllowOnlyHttpsRequests
+            Effect: Deny
+            Principal: "*"
+            Action: "s3:*"
+            Resource: 
+              - !Sub "arn:aws:s3:::${RawS3Bucket}"
+              - !Sub "arn:aws:s3:::${RawS3Bucket}/*"
+            Condition:
+              Bool:
+                aws:SecureTransport: "false"            
+
+  TrustedS3Bucket:
     Type: 'AWS::S3::Bucket'
     Properties:
       BucketName: 
          Fn::Join:
           - "-"
-          - [ !Ref EnvType, !Ref DomainName, "enriched-bucket-tpg"]
+          - [ "tpgt", !Ref DomainName, !Ref EnvType, "trusted"]
       BucketEncryption:
         ServerSideEncryptionConfiguration:
         - ServerSideEncryptionByDefault:
@@ -70,7 +106,25 @@ Resources:
         Rules:
           - Id: ExpireOldVersions
             Status: Enabled
-            NoncurrentVersionExpirationInDays: 30             
+            NoncurrentVersionExpirationInDays: 30
+            
+  TrustedBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref TrustedS3Bucket
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Sid: AllowOnlyHttpsRequests
+            Effect: Deny
+            Principal: "*"
+            Action: "s3:*"
+            Resource: 
+              - !Sub "arn:aws:s3:::${TrustedS3Bucket}"
+              - !Sub "arn:aws:s3:::${TrustedS3Bucket}/*"
+            Condition:
+              Bool:
+                aws:SecureTransport: "false"                        
 
 Outputs:
   LandingBucketName:
@@ -79,7 +133,7 @@ Outputs:
   RawS3BucketName:
     Description: The name of the Raw S3 bucket
     Value: !Ref RawS3Bucket
-  EnrichedS3BucketName:
+  TrustedS3BucketName:
     Description: The name of the Enriched S3 bucket
-    Value: !Ref EnrichedS3Bucket
+    Value: !Ref TrustedS3Bucket
 

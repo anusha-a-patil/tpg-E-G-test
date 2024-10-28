@@ -1,0 +1,45 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: CloudFormation template to create an S3 bucket
+
+Parameters:
+#GlueDB Parameters
+  DatabaseName:
+    Type: String
+    Default: 'tpg-glue-db'  
+    Description: 'Name of the Glue Database'
+  GlueDBPath:
+    Type: String
+    Description: Database yaml path
+#Crawler Parameters
+  CrawlerName:
+    Type: String
+    Default: 'tpg-glue-crawler'
+    Description: 'Name of the Glue Crawler'
+  GlueCrawlerPath:
+    Type: String
+    Description: Crawler yaml path
+
+Resources:
+  GlueDatabase:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Ref GlueDBPath
+      Parameters:
+        DatabaseName: !Ref DatabaseName
+
+  GlueCrawler:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Ref GlueCrawlerPath
+      Parameters:
+        CrawlerName: !Ref CrawlerName
+        DatabaseName: !GetAtt GlueDatabase.Outputs.DatabaseName
+        S3TargetPath: !GetAtt s3buckets.Outputs.LandingBucketName
+
+Outputs:
+  DatabaseName:
+    Description: 'Name of the Glue Database'
+    Value:  !GetAtt GlueDatabase.Outputs.DatabaseName
+  CrawlerName:
+    Description: 'Name of the created Glue Crawler'
+    Value:  !GetAtt GlueCrawler.Outputs.CrawlerName

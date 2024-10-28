@@ -37,11 +37,10 @@ Resources:
             Statement:
               - Effect: Allow
                 Action:
-                  - s3:GetObject
-                  - s3:ListBucket
-                Resource:
-                  - !Sub 'arn:aws:s3:::${S3TargetPath}'
-                  - !Sub 'arn:aws:s3:::${S3TargetPath}/*'
+                  - s3:*
+                  - glue:*
+                  - lakeformation:*
+                Resource: '*'
 
   GlueCrawler:
     Type: AWS::Glue::Crawler

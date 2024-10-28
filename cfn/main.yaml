@@ -31,66 +31,66 @@ Parameters:
     Type: String
     Description: Crawler yaml path    
 
-#Redshift Parameters
-  WorkgroupName:
-    Type: String
-    Default: 'tpg-redshift-workgroup'
-    Description: 'Name of the Redshift Serverless workgroup'
-  NamespaceName1:
-    Type: String
-    Default: 'tpg-redshift-namespace1'
-    Description: 'Name of the Redshift Serverless namespace'
-  NamespaceName2:
-    Type: String
-    Default: 'tpg-redshift-namespace2'
-    Description: 'Name of the Redshift Serverless namespace'    
-  RedshiftDatabaseName:
-    Type: String
-    Default: 'tpg-redshift-database'
-    Description: 'Name of the initial database to be created'
-  AdminUsername:
-    Type: String
-    Default: 'admin'
-    Description: 'Admin username for the Redshift Serverless instance'
-  AdminUserPassword:
-    Type: String
-    Default: 'Password28'
-    NoEcho: true
-    Description: 'Admin user password for the Redshift Serverless instance'
-  BaseCapacity:
-    Type: Number
-    Default: 32
-    Description: 'Base RPU capacity for the Redshift Serverless instance'
-  RedshiftStackUrl:
-    Type: String
-    Description: 'S3 URL of the nested stack template'
-  SubnetIds:
-    Type: String
-    Description: 'Subnet Ids'
-    Default: subnet-0e02df7b9e58e3960,subnet-05d7a985f0bdf9b64,subnet-04fc4b2eacf4f1df4
-#Dynamo DB Parameters
-  TableName:
-    Type: String
-    Description: 'Name of the DynamoDB table'
-    Default: 'my-dynamodb-table'
-  ReadCapacityUnits:
-    Type: Number
-    Description: 'Read capacity units for the table'
-    Default: 5
-    MinValue: 1
-  WriteCapacityUnits:
-    Type: Number
-    Description: 'Write capacity units for the table'
-    Default: 5
-    MinValue: 1
-  DynamoDBStackUrl:
-    Type: String
-    Description: 'Dynamo DB S3 URL of the nested stack template'
+# #Redshift Parameters
+#   WorkgroupName:
+#     Type: String
+#     Default: 'tpg-redshift-workgroup'
+#     Description: 'Name of the Redshift Serverless workgroup'
+#   NamespaceName1:
+#     Type: String
+#     Default: 'tpg-redshift-namespace1'
+#     Description: 'Name of the Redshift Serverless namespace'
+#   NamespaceName2:
+#     Type: String
+#     Default: 'tpg-redshift-namespace2'
+#     Description: 'Name of the Redshift Serverless namespace'    
+#   RedshiftDatabaseName:
+#     Type: String
+#     Default: 'tpg-redshift-database'
+#     Description: 'Name of the initial database to be created'
+#   AdminUsername:
+#     Type: String
+#     Default: 'admin'
+#     Description: 'Admin username for the Redshift Serverless instance'
+#   AdminUserPassword:
+#     Type: String
+#     Default: 'Password28'
+#     NoEcho: true
+#     Description: 'Admin user password for the Redshift Serverless instance'
+#   BaseCapacity:
+#     Type: Number
+#     Default: 32
+#     Description: 'Base RPU capacity for the Redshift Serverless instance'
+#   RedshiftStackUrl:
+#     Type: String
+#     Description: 'S3 URL of the nested stack template'
+#   SubnetIds:
+#     Type: String
+#     Description: 'Subnet Ids'
+#     Default: subnet-0e02df7b9e58e3960,subnet-05d7a985f0bdf9b64,subnet-04fc4b2eacf4f1df4
+# #Dynamo DB Parameters
+#   TableName:
+#     Type: String
+#     Description: 'Name of the DynamoDB table'
+#     Default: 'my-dynamodb-table'
+#   ReadCapacityUnits:
+#     Type: Number
+#     Description: 'Read capacity units for the table'
+#     Default: 5
+#     MinValue: 1
+#   WriteCapacityUnits:
+#     Type: Number
+#     Description: 'Write capacity units for the table'
+#     Default: 5
+#     MinValue: 1
+#   DynamoDBStackUrl:
+#     Type: String
+#     Description: 'Dynamo DB S3 URL of the nested stack template'
 
-#LF Parameters
-  LFStackUrl:
-    Type: String
-    Description: 'LF Stack S3 URL of the nested stack template'
+# #LF Parameters
+#   LFStackUrl:
+#     Type: String
+#     Description: 'LF Stack S3 URL of the nested stack template'
 
 Resources:
   s3buckets:
@@ -106,7 +106,8 @@ Resources:
     Properties:
       TemplateURL: !Ref GlueDBPath
       Parameters:
-        DatabaseName: !Ref DatabaseName
+        EnvType: !Ref EnvType
+        DomainName: !Ref DomainName
 
   GlueCrawler:
     Type: AWS::CloudFormation::Stack

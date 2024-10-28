@@ -2,9 +2,13 @@ AWSTemplateFormatVersion: '2010-09-09'
 Description: 'AWS Glue Database CloudFormation Template'
 
 Parameters:
-  DatabaseName:
+  EnvType:
     Type: String
-    Description: 'Name of the Glue Database'
+    Default: "dev"
+    Description: The environment type (e.g., prod, dev)
+  DomainName:
+    Type: String
+    Description: The name of the domain
 
 Resources:
   GlueDatabase:
@@ -12,7 +16,10 @@ Resources:
     Properties:
       CatalogId: !Ref AWS::AccountId
       DatabaseInput:
-        Name: !Ref DatabaseName
+        Name:
+         Fn::Join:
+          - "-"
+          - [ "tpgt", !Ref DomainName, !Ref EnvType, "landing", "db"]        
         Description: "Database for storing metadata from Glue Crawler"
 
 Outputs:
