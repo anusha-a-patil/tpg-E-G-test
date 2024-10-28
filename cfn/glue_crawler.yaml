@@ -2,14 +2,16 @@ AWSTemplateFormatVersion: '2010-09-09'
 Description: 'AWS Glue Crawler Nested Stack'
 
 Parameters:
-  CrawlerName:
+  EnvType:
     Type: String
-    Description: 'Name of the Glue Crawler'
-  
+    Default: "dev"
+    Description: The environment type (e.g., prod, dev)
+  DomainName:
+    Type: String
+    Description: The name of the domain
   DatabaseName:
     Type: String
     Description: 'Name of the Glue Database to store the crawled data'
-  
   S3TargetPath:
     Type: String
     Description: 'S3 path for the crawler to scan'
@@ -45,7 +47,11 @@ Resources:
   GlueCrawler:
     Type: AWS::Glue::Crawler
     Properties:
-      Name: !Ref CrawlerName
+      Name:
+        Name:
+         Fn::Join:
+          - "-"
+          - [ "tpgt", !Ref DomainName, !Ref EnvType, "landing", "crawler"]       
       Role: !GetAtt GlueCrawlerRole.Arn
       DatabaseName: !Ref DatabaseName
       Targets:
