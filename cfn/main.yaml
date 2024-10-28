@@ -21,7 +21,10 @@ Parameters:
 #Crawler Parameters
   GlueCrawlerPath:
     Type: String
-    Description: Crawler yaml path    
+    Description: Crawler yaml path 
+  S3TargetPath:
+    Type: String
+    Description: "s3://landing-console/" 
 
 # #Redshift Parameters
 #   WorkgroupName:
@@ -109,7 +112,7 @@ Resources:
         EnvType: !Ref EnvType
         DomainName: !Ref DomainName
         DatabaseName: !GetAtt GlueDatabase.Outputs.DatabaseName
-        S3TargetPath: !GetAtt s3buckets.Outputs.LandingBucketName
+        S3TargetPath: !Ref S3TargetPath
 
   RedshiftserverlessStack:
     Type: AWS::CloudFormation::Stack
