@@ -2,7 +2,6 @@ AWSTemplateFormatVersion: '2010-09-09'
 Description: CloudFormation template to create an S3 bucket
 
 Parameters:
-#S3 Parameters  
   EnvType:
     Type: String
     Default: "dev"
@@ -10,6 +9,7 @@ Parameters:
   DomainName:
     Type: String
     Description: The name of the domain
+#S3 Parameters
   BucketFilePath:
     Type: String
     Description: bucket yaml path
@@ -19,10 +19,6 @@ Parameters:
     Description: Database yaml path    
 
 #Crawler Parameters
-  CrawlerName:
-    Type: String
-    Default: 'tpg-glue-crawler'
-    Description: 'Name of the Glue Crawler'
   GlueCrawlerPath:
     Type: String
     Description: Crawler yaml path    
@@ -110,7 +106,8 @@ Resources:
     Properties:
       TemplateURL: !Ref GlueCrawlerPath
       Parameters:
-        CrawlerName: !Ref CrawlerName
+        EnvType: !Ref EnvType
+        DomainName: !Ref DomainName
         DatabaseName: !GetAtt GlueDatabase.Outputs.DatabaseName
         S3TargetPath: !GetAtt s3buckets.Outputs.LandingBucketName
 
